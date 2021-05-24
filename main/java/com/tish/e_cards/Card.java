@@ -6,11 +6,14 @@ public class Card {
     private String tag;
     private String description;
     private boolean mark;
+    private String folderName;
 
 
     public Card(String word, String translation) {
         this.word = word;
         this.translation = translation;
+        this.tag = null;
+        this.description = null;
         this.mark = false;
     }
 
@@ -20,6 +23,14 @@ public class Card {
         this.tag = tag;
         this.description = description;
         this.mark = false;
+    }
+
+    public Card(String word, String translation, String tag, String description, boolean mark) {
+        this.word = word;
+        this.translation = translation;
+        this.tag = tag;
+        this.description = description;
+        this.mark = mark;
     }
 
     public String getWord() {
@@ -60,5 +71,13 @@ public class Card {
 
     public void setMark(boolean mark) {
         this.mark = mark;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 }
