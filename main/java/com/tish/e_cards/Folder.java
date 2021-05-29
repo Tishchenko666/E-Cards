@@ -12,6 +12,12 @@ public class Folder {
         this.learnedCardAmount = 0;
     }
 
+    public Folder(String folderName, int cardAmount, int learnedCardAmount) {
+        this.folderName = folderName;
+        this.cardAmount = cardAmount;
+        this.learnedCardAmount = learnedCardAmount;
+    }
+
     public String getFolderName() {
         return folderName;
     }
