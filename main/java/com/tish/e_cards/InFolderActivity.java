@@ -2,6 +2,8 @@ package com.tish.e_cards;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +39,38 @@ public class InFolderActivity extends AppCompatActivity implements FragmentSendC
                 Intent editCardIntent = new Intent(InFolderActivity.this, EditCardActivity.class);
                 editCardIntent.putExtra("editCard", editCard);
                 startActivity(editCardIntent);
+            }
+        });
+
+        listViewCards.setLongClickable(true);
+        listViewCards.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String cardWord = ((Card) parent.getItemAtPosition(position)).getWord();
+                AlertDialog deleteDialog = new AlertDialog.Builder(InFolderActivity.this)
+                        .setTitle("Окно удаления карточки")
+                        .setMessage("Вы уверены, что хотите удалить карточку слова "
+                                + cardWord + "?")
+                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int result = cardsConnector.deleteCard(cardWord);
+                                if(result > 0){
+                                    cardsList.remove(position);
+                                    cardListAdapter.notifyDataSetChanged();
+                                    dialog.dismiss();
+                                } else
+                                    Toast.makeText(InFolderActivity.this, "При удалении произошла ошибка", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }).create();
+                deleteDialog.show();
+                return true;
             }
         });
 

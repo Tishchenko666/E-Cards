@@ -3,6 +3,8 @@ package com.tish.e_cards;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -52,6 +54,37 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
                 startActivity(inFolderIntent);
             }
         });
+        listViewFolders.setLongClickable(true);
+        listViewFolders.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String folderName = ((Folder) parent.getItemAtPosition(position)).getFolderName();
+                AlertDialog deleteDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Окно удаления папки")
+                        .setMessage("Вы уверены, что хотите удалить папку "
+                                + folderName + "?")
+                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int result = foldersConnector.deleteFolder(folderName);
+                                if(result > 0){
+                                    foldersList.remove(position);
+                                    folderListAdapter.notifyDataSetChanged();
+                                    dialog.dismiss();
+                                } else
+                                    Toast.makeText(MainActivity.this, "При удалении произошла ошибка", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }).create();
+                deleteDialog.show();
+                return true;
+            }
+        });
 
         addFolderButton = findViewById(R.id.add_folder_button);
         addFolderButton.setOnClickListener(new View.OnClickListener() {
@@ -76,12 +109,18 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_vocabulary) {
-
+                    Intent allInFolderIntent = new Intent(MainActivity.this, InFolderActivity.class);
+                    allInFolderIntent.putExtra("all", "Все слова");
+                    startActivity(allInFolderIntent);
                 } else if (itemId == R.id.nav_training) {
+                    Intent trainingIntent = new Intent(MainActivity.this, TrainingActivity.class);
+                    startActivity(trainingIntent);
+                } else if (itemId == R.id.nav_generator) {
+                    Intent generatorIntent = new Intent(MainActivity.this, GeneratorActivity.class);
+                    startActivity(generatorIntent);
+                } else if (itemId == R.id.nav_setting) {
 
                 } else if (itemId == R.id.nav_articles) {
-
-                } else if (itemId == R.id.nav_setting) {
 
                 }
                 drawer.closeDrawer(GravityCompat.START);
@@ -97,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
     }
 
     private void loadData() {
-        List<Folder> foldersList;
         foldersConnector = new FoldersConnector(MainActivity.this);
         foldersList = foldersConnector.getAllFolders();
         folderListAdapter = new FolderListAdapter(MainActivity.this, foldersList);

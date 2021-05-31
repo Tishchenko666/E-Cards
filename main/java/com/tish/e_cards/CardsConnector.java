@@ -41,7 +41,88 @@ public class CardsConnector {
     public List<Card> getAllCards(String folderName) {
         List<Card> cards = new ArrayList<Card>();
         db = dbHelper.getReadableDatabase();
-        cardCursor = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CARD_FOLDER_NAME + "=?", new String[]{folderName});
+
+        if (!folderName.equals("Все слова"))
+            cardCursor = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CARD_FOLDER_NAME + "=?", new String[]{folderName});
+        else
+            cardCursor = db.rawQuery("select * from " + TABLE_NAME, null);
+
+        cardCursor.moveToFirst();
+        while (cardCursor.moveToNext()) {
+            int id = cardCursor.getInt(cardCursor.getColumnIndex(COLUMN_CARD_ID));
+            String word = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_WORD));
+            String translation = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_TRANSLATION));
+            String tag = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_TAG));
+            String description = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_DESCRIPTION));
+            int mark = cardCursor.getInt(cardCursor.getColumnIndex(COLUMN_CARD_MARK));
+            boolean bMark = mark == 1;
+            Card card = new Card(word, translation, tag, description, bMark);
+            card.setId(id);
+            cards.add(card);
+        }
+        cardCursor.close();
+        db.close();
+        return cards;
+    }
+
+    public List<Card> getCardsFromFolderAndTag(String folderName, String searchTag) {
+        List<Card> cards = new ArrayList<Card>();
+        db = dbHelper.getReadableDatabase();
+        cardCursor = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CARD_FOLDER_NAME + "=? and " + COLUMN_CARD_TAG + "=?", new String[]{folderName, searchTag});
+        cardCursor.moveToFirst();
+        while (cardCursor.moveToNext()) {
+            String word = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_WORD));
+            String translation = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_TRANSLATION));
+            String tag = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_TAG));
+            String description = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_DESCRIPTION));
+            int mark = cardCursor.getInt(cardCursor.getColumnIndex(COLUMN_CARD_MARK));
+            boolean bMark = mark == 1;
+            Card card = new Card(word, translation, tag, description, bMark);
+            cards.add(card);
+        }
+        cardCursor.close();
+        db.close();
+        return cards;
+    }
+
+    public List<Card> getCardsWithTag(String searchTag) {
+        List<Card> cards = new ArrayList<Card>();
+        db = dbHelper.getReadableDatabase();
+        cardCursor = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CARD_TAG + "=?", new String[]{searchTag});
+        cardCursor.moveToFirst();
+        while (cardCursor.moveToNext()) {
+            String word = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_WORD));
+            String translation = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_TRANSLATION));
+            String tag = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_TAG));
+            String description = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_DESCRIPTION));
+            int mark = cardCursor.getInt(cardCursor.getColumnIndex(COLUMN_CARD_MARK));
+            boolean bMark = mark == 1;
+            Card card = new Card(word, translation, tag, description, bMark);
+            cards.add(card);
+        }
+        cardCursor.close();
+        db.close();
+        return cards;
+    }
+
+    public List<String> getCardTags() {
+        List<String> cardTags = new ArrayList<String>();
+        db = dbHelper.getReadableDatabase();
+        cardCursor = db.rawQuery("select " + COLUMN_CARD_TAG + " from " + TABLE_NAME + " group by " + COLUMN_CARD_TAG, null);
+        cardCursor.moveToFirst();
+        while (cardCursor.moveToNext()) {
+            String tag = cardCursor.getString(cardCursor.getColumnIndex(COLUMN_CARD_TAG));
+            cardTags.add(tag);
+        }
+        cardCursor.close();
+        db.close();
+        return cardTags;
+    }
+
+    public List<Card> getRandomCards(String x) {
+        List<Card> cards = new ArrayList<Card>();
+        db = dbHelper.getReadableDatabase();
+        cardCursor = db.rawQuery("select * from " + TABLE_NAME + " order by random() limit " + x, null);
         cardCursor.moveToFirst();
         while (cardCursor.moveToNext()) {
             int id = cardCursor.getInt(cardCursor.getColumnIndex(COLUMN_CARD_ID));
@@ -100,4 +181,10 @@ public class CardsConnector {
         return result;
     }
 
+    public int deleteCard(String word) {
+        db = dbHelper.getWritableDatabase();
+        int result = db.delete(TABLE_NAME, COLUMN_CARD_WORD + "=?", new String[]{word});
+        db.close();
+        return result;
+    }
 }

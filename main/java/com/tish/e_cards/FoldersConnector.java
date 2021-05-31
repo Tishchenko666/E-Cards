@@ -48,6 +48,21 @@ public class FoldersConnector {
         return folders;
     }
 
+    public String[] getAllFolderNames() {
+        List<String> folderNames = new ArrayList<String>();
+        db = dbHelper.getReadableDatabase();
+        folderCursor = db.rawQuery("select " + COLUMN_FOLDER_NAME + " from " + TABLE_NAME, null);
+        folderCursor.moveToFirst();
+        while (folderCursor.moveToNext()) {
+            String folderName = folderCursor.getString(folderCursor.getColumnIndex(COLUMN_FOLDER_NAME));
+            folderNames.add(folderName);
+        }
+        String[] names = (String[]) folderNames.toArray();
+        folderCursor.close();
+        db.close();
+        return names;
+    }
+
     public long insertNewFolder(String newFolderName) {
         ContentValues cvNewFolder = new ContentValues();
         cvNewFolder.put(COLUMN_FOLDER_NAME, newFolderName);
@@ -69,12 +84,13 @@ public class FoldersConnector {
             db.close();
         }
     }
+
     public void updateLearnedCardAmount(String folderName, int amountOfCards) {
-            db = dbHelper.getWritableDatabase();
-            ContentValues cvUpdateFolder = new ContentValues();
-            cvUpdateFolder.put(COLUMN_FOLDER_LEARNED_CARD_AMOUNT, amountOfCards);
-            db.update(TABLE_NAME, cvUpdateFolder, COLUMN_FOLDER_NAME + "=?", new String[]{folderName});
-            db.close();
+        db = dbHelper.getWritableDatabase();
+        ContentValues cvUpdateFolder = new ContentValues();
+        cvUpdateFolder.put(COLUMN_FOLDER_LEARNED_CARD_AMOUNT, amountOfCards);
+        db.update(TABLE_NAME, cvUpdateFolder, COLUMN_FOLDER_NAME + "=?", new String[]{folderName});
+        db.close();
     }
 
     public int getCardAmountInFolder(String folderName) {
@@ -85,5 +101,12 @@ public class FoldersConnector {
             return folderCursor.getInt(0);
         else
             return -1;
+    }
+
+    public int deleteFolder(String folderName) {
+        db = dbHelper.getWritableDatabase();
+        int result = db.delete(TABLE_NAME, COLUMN_FOLDER_NAME + "=?", new String[]{folderName});
+        db.close();
+        return result;
     }
 }

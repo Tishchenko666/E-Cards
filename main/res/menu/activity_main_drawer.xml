@@ -10,17 +10,22 @@
             android:id="@+id/nav_training"
             android:title="Тренировка" />
         <item
-            android:id="@+id/nav_articles"
-            android:title="Статьи" />
+            android:id="@+id/nav_generator"
+            android:title="Генератор случайных слов"/>
+
+
     </group>
-        <item android:title="Другое">
-            <menu>
-                <group android:checkableBehavior="single">
-                    <item
-                        android:id="@+id/nav_setting"
-                        android:title="Настройки" />
-                </group>
-            </menu>
-        </item>
+    <item android:title="Другое">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_setting"
+                    android:title="Настройки" />
+                <item
+                    android:id="@+id/nav_articles"
+                    android:title="Статьи" />
+            </group>
+        </menu>
+    </item>
 
 </menu>
