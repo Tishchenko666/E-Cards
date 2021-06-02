@@ -12,12 +12,12 @@ public class TrainListAdapter extends BaseAdapter {
     int[] trainIcons = {R.drawable.train_translation_word, R.drawable.train_word_translation,
             R.drawable.train_description_word, R.drawable.train_translation_enter_word,
             R.drawable.train_description_enter_word, R.drawable.train_accordig};
-    String[] trainNames = {"Поиск слова", "Поиск перевода", "Поиск слова по описанию",
-            "Ввод слова по переводу", "Ввод слова по описанию", "Поиск соответствий"};
+    String[] trainNames;
     Context context;
 
-    public TrainListAdapter(Context context) {
+    public TrainListAdapter(Context context, String[] namesArray) {
         this.context = context;
+        this.trainNames = namesArray;
     }
 
     @Override

@@ -94,13 +94,13 @@ public class FoldersConnector {
     }
 
     public int getCardAmountInFolder(String folderName) {
+        int amount = 0;
         db = dbHelper.getReadableDatabase();
         folderCursor = db.rawQuery("select count(*) from " + TABLE_NAME + " where " + COLUMN_FOLDER_NAME + "=?", new String[]{folderName});
-        db.close();
         if (folderCursor.moveToFirst())
-            return folderCursor.getInt(0);
-        else
-            return -1;
+            amount = folderCursor.getInt(0);
+        db.close();
+        return amount;
     }
 
     public int deleteFolder(String folderName) {

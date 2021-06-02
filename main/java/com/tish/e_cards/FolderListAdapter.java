@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -56,9 +57,9 @@ public class FolderListAdapter extends ArrayAdapter<Folder> {
     private static class FolderViewHolder {
         public static TextView textViewFolderName;
         public static TextView textViewCardsAmount;
-        Button learnWordsButton;
+        ImageView learnWordsButton;
 
-        FolderViewHolder(View view) {
+       FolderViewHolder(View view) {
             learnWordsButton = view.findViewById(R.id.b_learn_all_words);
         }
 

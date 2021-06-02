@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,6 +15,7 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,11 +25,12 @@ public class TrainSettingsDialog extends DialogFragment {
     FoldersConnector foldersConnector;
     Spinner folderSpinner;
     Spinner tagSpinner;
+    String trainName;
 
-    public TrainSettingsDialog(Context context) {
+    public TrainSettingsDialog(Context context, String trainName) {
         cardsConnector = new CardsConnector(context);
         foldersConnector = new FoldersConnector(context);
-
+        this.trainName = trainName;
     }
 
     @NonNull
@@ -51,23 +54,25 @@ public class TrainSettingsDialog extends DialogFragment {
         builder.setPositiveButton("Начать", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent trainIntent;
-                List<Card> cards;
+                Intent trainIntent = new Intent(getContext(), TrainModelActivity.class);
                 String folderName = folderSpinner.getSelectedItem().toString();
                 String tag = tagSpinner.getSelectedItem().toString();
                 if (!folderName.isEmpty() && !tag.isEmpty()) {
-                    cards = cardsConnector.getCardsFromFolderAndTag(folderName, tag);
-
+                    trainIntent.putExtra("folder", folderName);
+                    trainIntent.putExtra("tag", tag);
                 } else if (!folderName.isEmpty() && tag.isEmpty()) {
-                    cards = cardsConnector.getAllCards(folderName);
-
-                }else if (folderName.isEmpty() && !tag.isEmpty()) {
-                    cards = cardsConnector.getCardsWithTag(tag);
-
-                }else if (folderName.isEmpty() && tag.isEmpty()) {
-                    cards = cardsConnector.getAllCards("Все слова");
-
+                    trainIntent.putExtra("folder", folderName);
+                    trainIntent.putExtra("tag", "");
+                } else if (folderName.isEmpty() && !tag.isEmpty()) {
+                    trainIntent.putExtra("folder", "");
+                    trainIntent.putExtra("tag", tag);
+                } else if (folderName.isEmpty() && tag.isEmpty()) {
+                    trainIntent.putExtra("folder", "");
+                    trainIntent.putExtra("tag", "");
                 }
+                trainIntent.putExtra("trainingType", trainName);
+                startActivity(trainIntent);
+                dialog.dismiss();
             }
         });
         builder.setNegativeButton("Отменить", new DialogInterface.OnClickListener() {

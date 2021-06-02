@@ -25,8 +25,8 @@ public class CardsConnector {
             COLUMN_CARD_TRANSLATION + " TEXT NOT NULL, " +
             COLUMN_CARD_TAG + " TEXT, " +
             COLUMN_CARD_DESCRIPTION + " TEXT, " +
-            COLUMN_CARD_MARK + " INTEGER NOT NULL" +
-            "FOREIGN KEY(" + COLUMN_CARD_FOLDER_NAME + ") REFERENCES " +
+            COLUMN_CARD_MARK + " INTEGER NOT NULL, " +
+            "FOREIGN KEY (" + COLUMN_CARD_FOLDER_NAME + ") REFERENCES " +
             FoldersConnector.TABLE_NAME + "(" + FoldersConnector.COLUMN_FOLDER_NAME + ") " +
             "ON UPDATE CASCADE" + ")";
 
@@ -41,7 +41,7 @@ public class CardsConnector {
     public List<Card> getAllCards(String folderName) {
         List<Card> cards = new ArrayList<Card>();
         db = dbHelper.getReadableDatabase();
-
+        int a = 0;
         if (!folderName.equals("Все слова"))
             cardCursor = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CARD_FOLDER_NAME + "=?", new String[]{folderName});
         else

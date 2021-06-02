@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -39,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DBHelper firstHelper = new DBHelper(getApplicationContext());
         initView();
+        loadData();
     }
 
 
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int result = foldersConnector.deleteFolder(folderName);
-                                if(result > 0){
+                                if (result > 0) {
                                     foldersList.remove(position);
                                     folderListAdapter.notifyDataSetChanged();
                                     dialog.dismiss();
@@ -97,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_vocabulary) {
                     Intent allInFolderIntent = new Intent(MainActivity.this, InFolderActivity.class);
-                    allInFolderIntent.putExtra("all", "Все слова");
+                    allInFolderIntent.putExtra("folderName", "Все слова");
                     startActivity(allInFolderIntent);
                 } else if (itemId == R.id.nav_training) {
                     Intent trainingIntent = new Intent(MainActivity.this, TrainingActivity.class);
@@ -129,11 +131,6 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadData();
-    }
 
     private void loadData() {
         foldersConnector = new FoldersConnector(MainActivity.this);
