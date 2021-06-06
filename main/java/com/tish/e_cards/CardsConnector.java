@@ -41,7 +41,6 @@ public class CardsConnector {
     public List<Card> getAllCards(String folderName) {
         List<Card> cards = new ArrayList<Card>();
         db = dbHelper.getReadableDatabase();
-        int a = 0;
         if (!folderName.equals("Все слова"))
             cardCursor = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CARD_FOLDER_NAME + "=?", new String[]{folderName});
         else
@@ -122,7 +121,7 @@ public class CardsConnector {
     public List<Card> getRandomCards(String x) {
         List<Card> cards = new ArrayList<Card>();
         db = dbHelper.getReadableDatabase();
-        cardCursor = db.rawQuery("select * from " + TABLE_NAME + " order by random() limit " + x, null);
+        cardCursor = db.rawQuery("select * from " + TABLE_NAME + " order by random() limit " + (Integer.parseInt(x) + 1), null);
         cardCursor.moveToFirst();
         while (cardCursor.moveToNext()) {
             int id = cardCursor.getInt(cardCursor.getColumnIndex(COLUMN_CARD_ID));

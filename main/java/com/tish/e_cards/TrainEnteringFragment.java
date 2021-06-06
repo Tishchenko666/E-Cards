@@ -2,6 +2,7 @@ package com.tish.e_cards;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,12 +28,15 @@ public class TrainEnteringFragment extends Fragment {
     EditText answersEditText;
     Button checkButton;
     CardsConnector cardsConnector;
+    StatisticConnector statisticConnector;
     List<Card> cards;
     int index = 0;
     String answer;
     int learnedCounter = 0;
     int trainType = 0;
-
+    String trainingType;
+    String folder;
+    String tag;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,9 +49,9 @@ public class TrainEnteringFragment extends Fragment {
         cardsConnector = new CardsConnector(getContext());
 
         Bundle bundle = getArguments();
-        String trainingType = bundle.getString("trainType");
-        String folder = bundle.getString("folder");
-        String tag = bundle.getString("tag");
+        trainingType = bundle.getString("trainType");
+        folder = bundle.getString("folder");
+        tag = bundle.getString("tag");
 
         if (!folder.equalsIgnoreCase("") && !tag.equalsIgnoreCase("")) {
             cards = cardsConnector.getCardsFromFolderAndTag(folder, tag);
@@ -119,6 +123,7 @@ public class TrainEnteringFragment extends Fragment {
 
 
     private void dialogCreator(int result, int size) {
+        statisticConnector = new StatisticConnector(getContext());
         AlertDialog resultDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Окно результата тренировки")
                 .setMessage("Ваш результат:  "
@@ -126,13 +131,10 @@ public class TrainEnteringFragment extends Fragment {
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        statisticConnector.saveStatistic(new StatisticItem(trainingType, folder, tag, result + "/" + size));
+                        Intent backIntent = new Intent(getContext(), TrainingActivity.class);
+                        startActivity(backIntent);
                         dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
                     }
                 }).create();
         resultDialog.show();

@@ -1,9 +1,12 @@
 package com.tish.e_cards;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -35,7 +38,9 @@ public class CardsWatchingActivity extends AppCompatActivity {
         cardsConnector = new CardsConnector(CardsWatchingActivity.this);
         String folderName = getIntent().getExtras().getString("folderName");
         cards = cardsConnector.getAllCards(folderName);
-
+        Toolbar toolbar = findViewById(R.id.toolbar_view);
+        toolbar.setTitle(folderName);
+        setSupportActionBar(toolbar);
         setWordOnCard(cards.get(0).getWord(), 0);
         wordIndex = 0;
         tvWord.setOnClickListener(new View.OnClickListener() {
@@ -92,5 +97,18 @@ public class CardsWatchingActivity extends AppCompatActivity {
         tvTranslation.setText(tran);
         tvTranslation.startAnimation(animation);
         tvTranslation.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_app_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent homeIntent = new Intent(CardsWatchingActivity.this, MainActivity.class);
+        startActivity(homeIntent);
+        return super.onOptionsItemSelected(item);
     }
 }

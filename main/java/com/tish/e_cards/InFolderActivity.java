@@ -1,11 +1,17 @@
 package com.tish.e_cards;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -22,15 +28,20 @@ public class InFolderActivity extends AppCompatActivity implements FragmentSendC
     CardListAdapter cardListAdapter;
     FloatingActionButton addCardButton;
     List<Card> cardsList;
+    String fn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_folder);
+        fn = getIntent().getExtras().getString("folderName");
         initView();
     }
 
     private void initView() {
+        Toolbar toolbar = findViewById(R.id.toolbar_view);
+        toolbar.setTitle(fn);
+        setSupportActionBar(toolbar);
         listViewCards = findViewById(R.id.list_view_cards);
         listViewCards.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -38,6 +49,7 @@ public class InFolderActivity extends AppCompatActivity implements FragmentSendC
                 Card editCard = (Card) parent.getItemAtPosition(position);
                 Intent editCardIntent = new Intent(InFolderActivity.this, EditCardActivity.class);
                 editCardIntent.putExtra("editCard", editCard);
+                editCardIntent.putExtra("folder", fn);
                 startActivity(editCardIntent);
             }
         });
@@ -55,7 +67,7 @@ public class InFolderActivity extends AppCompatActivity implements FragmentSendC
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int result = cardsConnector.deleteCard(cardWord);
-                                if(result > 0){
+                                if (result > 0) {
                                     cardsList.remove(position);
                                     cardListAdapter.notifyDataSetChanged();
                                     dialog.dismiss();
@@ -92,7 +104,7 @@ public class InFolderActivity extends AppCompatActivity implements FragmentSendC
 
     private void loadData() {
         cardsConnector = new CardsConnector(InFolderActivity.this);
-        cardsList = cardsConnector.getAllCards(getIntent().getExtras().getString("folderName"));
+        cardsList = cardsConnector.getAllCards(fn);
         cardListAdapter = new CardListAdapter(InFolderActivity.this, cardsList);
         listViewCards.setAdapter(cardListAdapter);
     }
@@ -108,5 +120,18 @@ public class InFolderActivity extends AppCompatActivity implements FragmentSendC
         cardListAdapter.notifyDataSetChanged();
         FoldersConnector foldersConnector = new FoldersConnector(InFolderActivity.this);
         foldersConnector.updateCardAmount(card.getFolderName());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_app_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent homeIntent = new Intent(InFolderActivity.this, MainActivity.class);
+        startActivity(homeIntent);
+        return super.onOptionsItemSelected(item);
     }
 }

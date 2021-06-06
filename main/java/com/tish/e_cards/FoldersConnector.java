@@ -48,7 +48,7 @@ public class FoldersConnector {
         return folders;
     }
 
-    public String[] getAllFolderNames() {
+    public List<String> getAllFolderNames() {
         List<String> folderNames = new ArrayList<String>();
         db = dbHelper.getReadableDatabase();
         folderCursor = db.rawQuery("select " + COLUMN_FOLDER_NAME + " from " + TABLE_NAME, null);
@@ -57,10 +57,9 @@ public class FoldersConnector {
             String folderName = folderCursor.getString(folderCursor.getColumnIndex(COLUMN_FOLDER_NAME));
             folderNames.add(folderName);
         }
-        String[] names = (String[]) folderNames.toArray();
         folderCursor.close();
         db.close();
-        return names;
+        return folderNames;
     }
 
     public long insertNewFolder(String newFolderName) {

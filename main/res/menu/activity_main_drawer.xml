@@ -12,6 +12,9 @@
         <item
             android:id="@+id/nav_generator"
             android:title="Генератор случайных слов"/>
+        <item
+            android:id="@+id/nav_statistic"
+            android:title="Статистика"/>
 
 
     </group>

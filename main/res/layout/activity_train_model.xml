@@ -7,6 +7,8 @@
     android:orientation="vertical"
     tools:context=".TrainModelActivity">
 
+    <include layout="@layout/app_bar" />
+
     <FrameLayout
         android:id="@+id/train_container"
         android:layout_width="match_parent"

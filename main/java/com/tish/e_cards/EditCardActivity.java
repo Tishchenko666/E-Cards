@@ -1,9 +1,12 @@
 package com.tish.e_cards;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,12 +26,15 @@ public class EditCardActivity extends AppCompatActivity {
     CardsConnector cardsConnector;
     String previousWord;
     Card editCard;
+    String folder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_card);
-
+        Toolbar toolbar = findViewById(R.id.toolbar_view);
+        toolbar.setTitle("Редактировать слово");
+        setSupportActionBar(toolbar);
         etWord = findViewById(R.id.et_edit_card_word);
         etTranslation = findViewById(R.id.et_edit_card_translation);
         etTag = findViewById(R.id.et_edit_card_tag);
@@ -45,6 +51,7 @@ public class EditCardActivity extends AppCompatActivity {
             etTranslation.setText(editCard.getTranslation());
             etTag.setText(editCard.getTag());
             etDescription.setText(editCard.getDescription());
+            folder = extras.getString("folder");
         }
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -83,10 +90,24 @@ public class EditCardActivity extends AppCompatActivity {
                                 "Изменения не были сохранены. Повторите попытку", Toast.LENGTH_SHORT).show();
                     }
                     Intent backInFolder = new Intent(EditCardActivity.this, InFolderActivity.class);
+                    backInFolder.putExtra("folderName", folder);
                     startActivity(backInFolder);
                 }
             }
         });
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_app_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent homeIntent = new Intent(EditCardActivity.this, InFolderActivity.class);
+        homeIntent.putExtra("folderName", folder);
+        startActivity(homeIntent);
+        return super.onOptionsItemSelected(item);
     }
 }

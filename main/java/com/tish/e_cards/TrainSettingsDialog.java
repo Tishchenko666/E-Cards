@@ -42,7 +42,7 @@ public class TrainSettingsDialog extends DialogFragment {
         View setParamsView = inflater.inflate(R.layout.set_training_params_dialog_view, null);
         folderSpinner = setParamsView.findViewById(R.id.spinner_set_folder);
         tagSpinner = setParamsView.findViewById(R.id.spinner_set_tag);
-        String[] folderNamesList = foldersConnector.getAllFolderNames();
+        List<String> folderNamesList = foldersConnector.getAllFolderNames();
         ArrayAdapter<String> folderAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, folderNamesList);
         folderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         folderSpinner.setAdapter(folderAdapter);

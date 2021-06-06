@@ -120,6 +120,9 @@ public class MainActivity extends AppCompatActivity implements FragmentSendStrin
                 } else if (itemId == R.id.nav_generator) {
                     Intent generatorIntent = new Intent(MainActivity.this, GeneratorActivity.class);
                     startActivity(generatorIntent);
+                } else if (itemId == R.id.nav_statistic) {
+                    Intent statisticIntent = new Intent(MainActivity.this, StatisticActivity.class);
+                    startActivity(statisticIntent);
                 } else if (itemId == R.id.nav_setting) {
 
                 } else if (itemId == R.id.nav_articles) {

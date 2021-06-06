@@ -2,6 +2,7 @@ package com.tish.e_cards;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,18 +21,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static android.graphics.Color.GREEN;
+
 public class TrainSearchingFragment extends Fragment {
 
     TextView searchTextView;
     ListView answersListView;
     CardsConnector cardsConnector;
+    StatisticConnector statisticConnector;
     List<Card> cards;
     int index = 0;
     String[] answerParts = new String[2];
     int learnedCounter = 0;
+    String trainingType;
+    String folder;
+    String tag;
 
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.train_searching_fragment, null);
@@ -40,9 +46,9 @@ public class TrainSearchingFragment extends Fragment {
 
         cardsConnector = new CardsConnector(getContext());
         Bundle bundle = getArguments();
-        String trainingType = bundle.getString("trainType");
-        String folder = bundle.getString("folder");
-        String tag = bundle.getString("tag");
+        trainingType = bundle.getString("trainType");
+        folder = bundle.getString("folder");
+        tag = bundle.getString("tag");
 
         if (!folder.equalsIgnoreCase("") && !tag.equalsIgnoreCase("")) {
             cards = cardsConnector.getCardsFromFolderAndTag(folder, tag);
@@ -71,17 +77,17 @@ public class TrainSearchingFragment extends Fragment {
                 String selectedItem = (String) parent.getItemAtPosition(position);
                 if (trainingType.equals("Поиск слова")) {
                     if (answerParts[0].equalsIgnoreCase(selectedItem)) {
-                        answersListView.getChildAt(position).setBackgroundColor(Color.GREEN);
+                        //answersListView.getChildAt(position).setBackgroundColor(GREEN);
                         learnedCounter += 1;
                     } else {
                         answersListView.getChildAt(position).setBackgroundColor(Color.RED);
                     }
-                    try {
-                        Thread.sleep(2000);
+                    /*try {
+                        Thread.sleep(4000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
-                    answersListView.getChildAt(position).setBackgroundColor(Color.WHITE);
+                    }*/
+                    //answersListView.getChildAt(position).setBackgroundColor(Color.WHITE);
                     answerParts = null;
                     if (index < cards.size())
                         answerParts = getSearchItem(1, index);
@@ -90,7 +96,7 @@ public class TrainSearchingFragment extends Fragment {
                     }
                 } else if (trainingType.equals("Поиск перевода")) {
                     if (answerParts[1].equalsIgnoreCase(selectedItem)) {
-                        answersListView.getChildAt(position).setBackgroundColor(Color.GREEN);
+                        answersListView.getChildAt(position).setBackgroundColor(GREEN);
                         learnedCounter += 1;
                     } else {
                         answersListView.getChildAt(position).setBackgroundColor(Color.RED);
@@ -109,7 +115,7 @@ public class TrainSearchingFragment extends Fragment {
                     }
                 } else if (trainingType.equals("Поиск слова по описанию")) {
                     if (answerParts[0].equalsIgnoreCase(selectedItem)) {
-                        answersListView.getChildAt(position).setBackgroundColor(Color.GREEN);
+                        answersListView.getChildAt(position).setBackgroundColor(GREEN);
                         learnedCounter += 1;
                     } else {
                         answersListView.getChildAt(position).setBackgroundColor(Color.RED);
@@ -192,20 +198,18 @@ public class TrainSearchingFragment extends Fragment {
     }
 
     private void dialogCreator(int result, int size) {
+        statisticConnector = new StatisticConnector(getContext());
         AlertDialog resultDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Окно результата тренировки")
                 .setMessage("Ваш результат:  "
                         + result + " из " + size)
-                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        statisticConnector.saveStatistic(new StatisticItem(trainingType, folder, tag, result + "/" + size));
+                        Intent backIntent = new Intent(getContext(), TrainingActivity.class);
+                        startActivity(backIntent);
                         dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
                     }
                 }).create();
         resultDialog.show();
